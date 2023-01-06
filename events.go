@@ -265,6 +265,7 @@ func (s *Session) handleNodeUp(eventIp net.IP, eventPort int) {
 	host, ok := s.ring.getHostByIP(eventIp.String())
 	if !ok {
 		// need to add host here?
+		s.logger.Printf("SS CHANGE: UPDATING RING ON NODE UP: %s:%d\n", eventIp.String(), eventPort)
 		if err := s.hostSource.refreshRing(); err != nil && gocqlDebug {
 			s.logger.Printf("gocql: Session.handleNewNode: failed to refresh ring: %w\n", err.Error())
 		}
@@ -306,6 +307,7 @@ func (s *Session) handleNodeDown(ip net.IP, port int) {
 
 	host, ok := s.ring.getHostByIP(ip.String())
 	if ok {
+		s.logger.Printf("SS REMOVING NODE FROM POOL")
 		host.setState(NodeDown)
 		if s.cfg.filterHost(host) {
 			return
