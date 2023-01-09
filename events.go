@@ -238,18 +238,20 @@ func (s *Session) handleRemovedNode(ip net.IP, port int) {
 		s.logger.Printf("gocql: Session.handleRemovedNode: %s:%d\n", ip.String(), port)
 	}
 
+	s.logger.Printf("STEVEN HANDLEREMOVEDNODE")
 	// we remove all nodes but only add ones which pass the filter
 	host, ok := s.ring.getHostByIP(ip.String())
-	if ok {
-		hostID := host.HostID()
-		s.ring.removeHost(hostID)
+	if host == nil {
+		host = &HostInfo{connectAddress: ip, port: port}
+	}
 
-		host.setState(NodeDown)
-		if !s.cfg.filterHost(host) {
-			s.policy.RemoveHost(host)
-			s.pool.removeHost(hostID)
-		}
+	hostID := host.HostID()
+	s.ring.removeHost(hostID)
 
+	host.setState(NodeDown)
+	if !s.cfg.filterHost(host) {
+		s.policy.RemoveHost(host)
+		s.pool.removeHost(hostID)
 	}
 
 	if err := s.hostSource.refreshRing(); err != nil && gocqlDebug {
