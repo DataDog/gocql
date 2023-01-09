@@ -672,8 +672,10 @@ func (r *ringDescriber) refreshRing() error {
 	if err != nil {
 		return err
 	}
+	r.session.logger.Printf("host_source HOSTS: %v", hosts)
 
 	prevHosts := r.session.ring.currentHosts()
+	r.session.logger.Printf("host_source PREV HOSTS: %v", prevHosts)
 
 	// TODO: move this to session
 	for _, h := range hosts {
@@ -682,8 +684,10 @@ func (r *ringDescriber) refreshRing() error {
 		}
 
 		if host, ok := r.session.ring.addHostIfMissing(h); !ok {
+			r.session.logger.Printf("host_source ADDING MISSING HOST %v", h)
 			r.session.startPoolFill(h)
 		} else {
+			r.session.logger.Printf("host_source UPDATING HOST %v", h)
 			host.update(h)
 		}
 		delete(prevHosts, h.HostID())
@@ -693,6 +697,7 @@ func (r *ringDescriber) refreshRing() error {
 	// in a session so that everything sees a consistent state. Becuase as is today
 	// events can come in and due to ordering an UP host could be removed from the cluster
 	for _, host := range prevHosts {
+		r.session.logger.Printf("host_source REMOVING HOST FROM SESSION %v", host)
 		r.session.removeHost(host)
 	}
 

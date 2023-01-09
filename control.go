@@ -98,6 +98,7 @@ func (c *controlConn) heartBeat() {
 	reconn:
 		// try to connect a bit faster
 		sleepTime = 1 * time.Second
+		c.session.logger.Printf("control RECONNECT IN HEARTBEAT")
 		c.reconnect(true)
 		continue
 	}
@@ -382,6 +383,7 @@ func (c *controlConn) reconnect(refreshring bool) {
 	}
 
 	if refreshring {
+		c.session.logger.Printf("control REFRESHING TRUE RECONNECT")
 		c.session.hostSource.refreshRing()
 	}
 }
@@ -399,6 +401,7 @@ func (c *controlConn) HandleError(conn *Conn, err error, closed bool) {
 		return
 	}
 
+	c.session.logger.Printf("control RECCONNECT ON HANDLERERROR")
 	c.reconnect(false)
 }
 
@@ -433,6 +436,7 @@ func (c *controlConn) withConnHost(fn func(*connHost) *Iter) *Iter {
 
 			connectAttempts++
 
+			c.session.logger.Printf("control RECONNECT WITH CONN HOST %v", c.state)
 			c.reconnect(false)
 			continue
 		}

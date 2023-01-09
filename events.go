@@ -307,6 +307,7 @@ func (s *Session) handleNodeDown(ip net.IP, port int) {
 		s.logger.Printf("gocql: Session.handleNodeDown: %s:%d\n", ip.String(), port)
 	}
 
+	s.logger.Printf("gocql: Session.handleNodeDown: %s:%d\n", ip.String(), port)
 	host, ok := s.ring.getHostByIP(ip.String())
 	if ok {
 		s.logger.Printf("SS REMOVING NODE FROM POOL")
@@ -315,8 +316,13 @@ func (s *Session) handleNodeDown(ip net.IP, port int) {
 			return
 		}
 
+		s.logger.Printf("SS CURRENT POOL %v: ", s.pool.hostConnPools)
+
 		s.policy.HostDown(host)
 		hostID := host.HostID()
 		s.pool.removeHost(hostID)
+		s.logger.Printf("SS POST POOL %v: ", s.pool.hostConnPools)
+	} else {
+		s.logger.Printf("SS HOST NOT FOUND %s", ip.String())
 	}
 }
