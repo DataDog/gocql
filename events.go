@@ -241,7 +241,7 @@ func (s *Session) handleRemovedNode(ip net.IP, port int) {
 	s.logger.Printf("STEVEN HANDLEREMOVEDNODE")
 	// we remove all nodes but only add ones which pass the filter
 	host, ok := s.ring.getHostByIP(ip.String())
-	if host == nil {
+	if !ok {
 		host = &HostInfo{connectAddress: ip, port: port}
 	}
 
