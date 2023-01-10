@@ -554,7 +554,7 @@ func (s *Session) hostInfoFromMap(row map[string]interface{}, host *HostInfo) (*
 	}
 
 	ip, port := s.cfg.translateAddressPort(host.ConnectAddress(), host.port)
-	if host.broadcastAddress != ip {
+	if host.broadcastAddress.String() != ip.String() {
 		fmt.Println(fmt.Sprintf("STEVEN: MISMATCH IN IP ADDRESSES b: %v, ip: %v, c: %v\n %v", host.broadcastAddress, ip, host.ConnectAddress(), host))
 	}
 
