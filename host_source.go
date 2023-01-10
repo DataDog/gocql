@@ -553,11 +553,11 @@ func (s *Session) hostInfoFromMap(row map[string]interface{}, host *HostInfo) (*
 		// Not sure what the port field will be called until the JIRA issue is complete
 	}
 
+	ip, port := s.cfg.translateAddressPort(host.ConnectAddress(), host.port)
 	if host.broadcastAddress != ip {
-		fmt.Println(fmt.Sprintf("STEVEN: MISMATCH IN IP ADDRESSES b: %v, c: %v\n %v", host.broadcastAddress, ip, host))
+		fmt.Println(fmt.Sprintf("STEVEN: MISMATCH IN IP ADDRESSES b: %v, ip: %v, c: %v\n %v", host.broadcastAddress, ip, host.ConnectAddress(), host))
 	}
 
-	ip, port := s.cfg.translateAddressPort(host.ConnectAddress(), host.port)
 	host.connectAddress = ip
 	host.port = port
 
