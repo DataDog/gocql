@@ -94,6 +94,7 @@ func (r *ring) addHostIfMissing(host *HostInfo) (*HostInfo, bool) {
 
 	existing, ok := r.hosts[hostID]
 	if !ok {
+		fmt.Println(fmt.Sprintf("steven: adding missing host %v", host))
 		r.hosts[hostID] = host
 		r.hostIPToUUID[host.nodeToNodeAddress().String()] = hostID
 		existing = host

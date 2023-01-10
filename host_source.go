@@ -323,6 +323,8 @@ func (h *HostInfo) Port() int {
 }
 
 func (h *HostInfo) update(from *HostInfo) {
+	fmt.Println(fmt.Sprintf("steven: UPDATING HOST INFO \nold: %v\n new: %v"), h, from)
+
 	if h == from {
 		return
 	}
@@ -382,6 +384,8 @@ func (h *HostInfo) update(from *HostInfo) {
 	if h.tokens == nil {
 		h.tokens = from.tokens
 	}
+
+	fmt.Println(fmt.Sprintf("steven: UPDATED HOST %v", h))
 }
 
 func (h *HostInfo) IsUp() bool {
@@ -549,6 +553,10 @@ func (s *Session) hostInfoFromMap(row map[string]interface{}, host *HostInfo) (*
 		// Not sure what the port field will be called until the JIRA issue is complete
 	}
 
+	if host.broadcastAddress != ip {
+		fmt.Println(fmt.Sprintf("STEVEN: MISMATCH IN IP ADDRESSES b: %v, c: %v\n %v", host.broadcastAddress, ip, host))
+	}
+
 	ip, port := s.cfg.translateAddressPort(host.ConnectAddress(), host.port)
 	host.connectAddress = ip
 	host.port = port
@@ -560,6 +568,7 @@ func (s *Session) hostInfoFromMap(row map[string]interface{}, host *HostInfo) (*
 func (r *ringDescriber) getClusterPeerInfo() ([]*HostInfo, error) {
 	var hosts []*HostInfo
 	iter := r.session.control.withConnHost(func(ch *connHost) *Iter {
+		fmt.Println(fmt.Sprintf("steven: PEER INFO adding connection host %v", ch.host))
 		hosts = append(hosts, ch.host)
 		return ch.conn.querySystemPeers(context.TODO(), ch.host.version)
 	})
@@ -577,6 +586,7 @@ func (r *ringDescriber) getClusterPeerInfo() ([]*HostInfo, error) {
 	for _, row := range rows {
 		// extract all available info about the peer
 		host, err := r.session.hostInfoFromMap(row, &HostInfo{port: r.session.cfg.Port})
+		fmt.Println(fmt.Sprintf("steven: PEER INFO adding host from query %v", host))
 		if err != nil {
 			return nil, err
 		} else if !isValidPeer(host) {
@@ -615,7 +625,7 @@ func (r *ringDescriber) GetHosts() ([]*HostInfo, string, error) {
 	if len(hosts) > 0 {
 		partitioner = hosts[0].Partitioner()
 	}
-
+	r.session.logger.Printf("steven: GET HOSTS output %v", hosts)
 	return hosts, partitioner, nil
 }
 

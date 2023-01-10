@@ -1735,6 +1735,7 @@ func (c *Conn) localHostInfo(ctx context.Context) (*HostInfo, error) {
 		return nil, err
 	}
 
+	fmt.Println(fmt.Sprintf("steven: ADD OR UPDATE FROM CONN %v", host))
 	return c.session.ring.addOrUpdate(host), nil
 }
 

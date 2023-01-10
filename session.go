@@ -258,6 +258,7 @@ func (s *Session) init() error {
 	// again
 	atomic.AddInt64(&left, 1)
 	for _, host := range hostMap {
+		fmt.Println(fmt.Sprintf("steven: ADD OR UPDATE FROM SESSION %v", host))
 		host := s.ring.addOrUpdate(host)
 		if s.cfg.filterHost(host) {
 			continue
