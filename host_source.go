@@ -391,10 +391,11 @@ func (h *HostInfo) IsUp() bool {
 func (h *HostInfo) HostnameAndPort() string {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	if h.hostname == "" {
-		addr, _ := h.connectAddressLocked()
-		h.hostname = addr.String()
-	}
+	// already have an IP, don't use hostname
+	// if h.hostname == "" {
+	addr, _ := h.connectAddressLocked()
+	h.hostname = addr.String()
+	// }
 	return net.JoinHostPort(h.hostname, strconv.Itoa(h.port))
 }
 
