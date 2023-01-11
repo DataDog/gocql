@@ -1730,10 +1730,12 @@ func (c *Conn) localHostInfo(ctx context.Context) (*HostInfo, error) {
 	port := c.conn.RemoteAddr().(*net.TCPAddr).Port
 
 	// TODO(zariel): avoid doing this here
+	fmt.Println(fmt.Sprintf("localHostInfo CONN HOST %v", c.host))
 	host, err := c.session.hostInfoFromMap(row, &HostInfo{connectAddress: c.host.connectAddress, port: port})
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(fmt.Sprintf("localHostInfo OUTPUT HOST %v", host))
 
 	fmt.Println(fmt.Sprintf("steven: ADD OR UPDATE FROM CONN %v", host))
 	return c.session.ring.addOrUpdate(host), nil

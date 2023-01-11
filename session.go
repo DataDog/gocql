@@ -245,6 +245,7 @@ func (s *Session) init() error {
 	for _, host := range hosts {
 		hostMap[host.HostID()] = host
 	}
+	fmt.Println("steven: HOST MAP %v", hostMap)
 
 	hosts = hosts[:0]
 	// each host will increment left and decrement it after connecting and once

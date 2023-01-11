@@ -46,6 +46,7 @@ func (hd *defaultHostDialer) DialHost(ctx context.Context, host *HostInfo) (*Dia
 	}
 
 	addr := host.HostnameAndPort()
+	fmt.Println(fmt.Sprintf("DialHost DIALING HOST %v", addr))
 	conn, err := hd.dialer.DialContext(ctx, "tcp", addr)
 	if err != nil {
 		return nil, err

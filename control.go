@@ -230,7 +230,9 @@ func (c *controlConn) connect(hosts []*HostInfo) error {
 
 	// shuffle endpoints so not all drivers will connect to the same initial
 	// node.
+	fmt.Println(fmt.Sprintf("connect PRE SHUFFLE %v", hosts))
 	hosts = shuffleHosts(hosts)
+	fmt.Println(fmt.Sprintf("connect POST SHUFFLE %v", hosts))
 
 	cfg := *c.session.connCfg
 	cfg.disableCoalesce = true
@@ -238,11 +240,13 @@ func (c *controlConn) connect(hosts []*HostInfo) error {
 	var conn *Conn
 	var err error
 	for _, host := range hosts {
+		fmt.Println(fmt.Sprintf("connect DIALING HOST %v", host))
 		conn, err = c.session.dial(c.session.ctx, host, &cfg, c)
 		if err != nil {
 			c.session.logger.Printf("gocql: unable to dial control conn %v:%v: %v\n", host.ConnectAddress(), host.Port(), err)
 			continue
 		}
+		fmt.Println(fmt.Sprintf("connect ESTABLISHED CONNECTION connhost: %v, conn_addr: %v", conn.host, conn.addr))
 		err = c.setupConn(conn)
 		if err == nil {
 			break
@@ -274,6 +278,7 @@ func (c *controlConn) setupConn(conn *Conn) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(fmt.Sprintf("setupConn HOST: %v using CONNHOST", host, conn.host))
 
 	if c.session.cfg.filterHost(host) {
 		return fmt.Errorf("host was filtered: %v", host.ConnectAddress())
