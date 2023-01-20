@@ -147,7 +147,7 @@ func (s *Session) handleNodeEvent(frames []frame) {
 			s.logger.Printf("steven: topology frame event. change: %v host: %v", f.change, f.host)
 			event, ok := events[f.host.String()]
 			if !ok {
-				logger.Printf("host not dupe")
+				s.logger.Printf("host not dupe")
 				event = &nodeEvent{change: f.change, host: f.host, port: f.port}
 				events[f.host.String()] = event
 			}
