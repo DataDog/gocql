@@ -215,6 +215,8 @@ func (s *Session) init() error {
 
 		if !s.cfg.DisableInitialHostLookup {
 			var partitioner string
+			// by doing this here, we are effectively removing the hostname bit from all
+			// hosts other than the control conn
 			newHosts, partitioner, err := s.hostSource.GetHosts()
 			if err != nil {
 				return err

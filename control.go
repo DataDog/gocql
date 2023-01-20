@@ -150,6 +150,7 @@ func hostInfo(addr string, defaultPort int) ([]*HostInfo, error) {
 	for _, ip := range ips {
 		hosts = append(hosts, &HostInfo{hostname: host, connectAddress: ip, port: port})
 	}
+	fmt.Println(fmt.Sprintf("SETTING UP HOST INFO %v", hosts))
 
 	return hosts, nil
 }
@@ -269,6 +270,7 @@ type connHost struct {
 
 func (c *controlConn) setupConn(conn *Conn) error {
 	// we need up-to-date host info for the filterHost call below
+	// here is where the host is double updated with DNS -- no guarantee connected_address == broadcast_address
 	host, err := conn.localHostInfo(context.TODO())
 	if err != nil {
 		return err
@@ -346,6 +348,7 @@ func (c *controlConn) reconnect(refreshring bool) {
 
 	hosts := c.session.ring.allHosts()
 	hosts = shuffleHosts(hosts)
+	c.session.logger.Printf("steven: reconnect loop. Host list: %v", hosts)
 
 	// keep the old behavior of connecting to the old host first by moving it to
 	// the front of the slice
@@ -398,7 +401,7 @@ func (c *controlConn) HandleError(conn *Conn, err error, closed bool) {
 	if oldConn != nil && oldConn.conn != conn {
 		return
 	}
-
+	c.session.logger.Print("in error handler somehow")
 	c.reconnect(false)
 }
 

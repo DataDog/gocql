@@ -138,26 +138,33 @@ func (s *Session) handleNodeEvent(frames []frame) {
 
 	events := make(map[string]*nodeEvent)
 
+	s.logger.Printf("steven: begin frame processing")
 	for _, frame := range frames {
+		s.logger.Printf("steven: processing frame. Frame: %v")
 		// TODO: can we be sure the order of events in the buffer is correct?
 		switch f := frame.(type) {
 		case *topologyChangeEventFrame:
+			s.logger.Printf("steven: topology frame event. change: %v host: %v", f.change, f.host)
 			event, ok := events[f.host.String()]
 			if !ok {
+				logger.Printf("host not dupe")
 				event = &nodeEvent{change: f.change, host: f.host, port: f.port}
 				events[f.host.String()] = event
 			}
 			event.change = f.change
 
 		case *statusChangeEventFrame:
+			s.logger.Printf("steven: status frame event. change: %v host: %v", f.change, f.host)
 			event, ok := events[f.host.String()]
 			if !ok {
+				s.logger.Printf("host not dupe")
 				event = &nodeEvent{change: f.change, host: f.host, port: f.port}
 				events[f.host.String()] = event
 			}
 			event.change = f.change
 		}
 	}
+	s.logger.Printf("steven: end frame processing")
 
 	for _, f := range events {
 		if gocqlDebug {
