@@ -1727,11 +1727,11 @@ func (c *Conn) localHostInfo(ctx context.Context) (*HostInfo, error) {
 		return nil, err
 	}
 
-	port := c.conn.RemoteAddr().(*net.TCPAddr).Port
+	addr := c.conn.RemoteAddr().(*net.TCPAddr)
 
 	// TODO(zariel): avoid doing this here
 	fmt.Println(fmt.Sprintf("PRE LOCAL INFO CONNECT connect_address: %v hostname : %v remoteAddress: %v", c.host.ConnectAddress(), c.host.hostname, c.conn.RemoteAddr()))
-	host, err := c.session.hostInfoFromMap(row, &HostInfo{connectAddress: c.host.connectAddress, port: port})
+	host, err := c.session.hostInfoFromMap(row, &HostInfo{connectAddress: addr.IP, port: addr.Port})
 	if err != nil {
 		return nil, err
 	}
