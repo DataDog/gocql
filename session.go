@@ -303,6 +303,8 @@ func (s *Session) init() error {
 		if readyPolicy != nil && readyPolicy.Ready() {
 			break
 		}
+		// TODO(jlegrone): remove this
+		break
 	}
 
 	// TODO(zariel): we probably dont need this any more as we verify that we
